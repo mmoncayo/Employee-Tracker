@@ -14,7 +14,6 @@ CREATE TABLE department(
   PRIMARY KEY (id)
 );
 
-
 -- Create the table role
 CREATE TABLE role(
   id int AUTO_INCREMENT NOT NULL,
