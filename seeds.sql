@@ -1,3 +1,6 @@
+-- Use company_db for reference
+USE company_db;
+
 -- Create starter data for department table
 INSERT INTO department (name) 
 VALUES 
