@@ -23,12 +23,12 @@ VALUES
 -- Create starter data for employee table
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES
-("Stanley", "Hudson", 1),
+("Stanley", "Hudson", 1, null),
 ("Kevin", "Malone", 2, 1),
-("Angela", "Martin", 3),
+("Angela", "Martin", 3, null),
 ("Kelly", "Kapoor", 4, 5),
-("Toby", "Flenderson", 5),
+("Toby", "Flenderson", 5, null),
 ("Pam", "Beasley", 6, 7),
-("Michael", "Scott", 7),
+("Michael", "Scott", 7, null),
 ("Dwight", "Schrute", 8, 9),
-("Jim", "Halpert", 9);
+("Jim", "Halpert", 9, null);
