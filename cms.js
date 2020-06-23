@@ -105,3 +105,23 @@ function viewEmployees() {
         runCMS();
     });
 }
+
+// function for viewing all roles available
+function viewRoles() {
+    const query = "SELECT * FROM role";
+    connection.query(query, function(err, res) {
+        if(err) throw err;
+            console.table(res);
+        runCMS();
+    });
+}
+
+// function for viewing all departments available
+function viewDepartments() {
+    const query = "SELECT * FROM department";
+    connection.query(query, function(err, res) {
+        if(err) throw err;
+            console.table(res);
+        runCMS();
+    });
+}
