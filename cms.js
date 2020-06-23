@@ -1,7 +1,6 @@
 // dependencies
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-const consoleTable = require("console.table");
 
 // establishing connection template
 const connection = mysql.createConnection({
@@ -18,12 +17,14 @@ const connection = mysql.createConnection({
     database: "company_db"
 });
 
-// establishing connection to MySQL Workbench
+// establishing connection to MySQL Workbench when starting program and prompts user what action to take
 connection.connect(function (err) {
     if (err) throw err;
     runCMS();
 });
 
+
+// main menu of options for the user to select to do with the Company Content Management System (CMS)
 function runCMS() {
     inquirer
         .prompt({
@@ -43,7 +44,8 @@ function runCMS() {
                 "Delete an Employee",
                 "Delete a Role",
                 "Delete a Department",
-                "View Total Utilized Budget by Department"
+                "View Total Utilized Budget by Department",
+                "EXIT"
             ]
         })
         .then(function (answer) {
@@ -87,7 +89,19 @@ function runCMS() {
                 case "View Total Utilized Budget by Department":
                     viewDeptBudget();
                     break;
+                case "EXIT":
+                    connection.end();
+                    break;
             }
         });
 };
 
+// function for viewing employee roster
+function viewEmployees() {
+    const query = "SELECT * FROM employee";
+    connection.query(query, function(err, res) {
+        if(err) throw err;
+            console.table(res);
+        runCMS();
+    });
+}
