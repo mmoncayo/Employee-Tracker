@@ -20,7 +20,7 @@ CREATE TABLE role(
   title VARCHAR(30),
   salary DECIMAL,
   department_id int,
-  PRIMARY KEY (id),
+  PRIMARY KEY (id)
 );
 
 -- Create table employee
@@ -30,7 +30,7 @@ CREATE TABLE employee(
   last_name VARCHAR(30),
   role_id int,
   manager_id int,
-  PRIMARY KEY (id),
+  PRIMARY KEY (id)
 );
 
 -- Shows values for selected tables
