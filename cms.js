@@ -2,7 +2,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
-// establishing connection template and utilizing Promises for async await methods in the program
+// establishing connection template and utilizing Promises for async await methods in the program when running queries
 class Database {
     constructor(config) {
         this.connection = mysql.createConnection(config);
@@ -41,6 +41,8 @@ const db = new Database({
     database: "company_db"
 });
 
+// MAIN MENU
+
 // main menu of options for the user to select to do with the Company Content Management System (CMS)
 function runCMS() {
     inquirer
@@ -57,11 +59,11 @@ function runCMS() {
                 "Add a Department",
                 "Update an Employee's Role",
                 "Update an Employee's Manager",
-                "View Employees by Manager",
+                // "View Employees by Manager",
                 "Delete an Employee",
                 "Delete a Role",
                 "Delete a Department",
-                "View Total Utilized Budget by Department",
+                // "View Total Utilized Budget by Department",
                 "EXIT"
             ]
         })
@@ -91,9 +93,9 @@ function runCMS() {
                 case "Update an Employee's Manager":
                     updateEmployeeManager();
                     break;
-                case "View Employees by Manager":
-                    viewEmployeesByManager();
-                    break;
+                // case "View Employees by Manager":
+                //     viewEmployeesByManager();
+                    // break;
                 case "Delete an Employee":
                     delEmployee();
                     break;
@@ -103,9 +105,9 @@ function runCMS() {
                 case "Delete a Department":
                     delDepartment();
                     break;
-                case "View Total Utilized Budget by Department":
-                    viewDeptBudget();
-                    break;
+                // case "View Total Utilized Budget by Department":
+                //     viewDeptBudget();
+                    // break;
                 case "EXIT":
                     db.close();
                     break;
@@ -114,12 +116,15 @@ function runCMS() {
 };
 
 // insert welcome message/ascii art to start the app off
+console.log("\x1b[1m",`\n~ Welcome to the Employee Manager CMS! ~\n\n`);
 
 // then initiate the program
 runCMS();
 
+
 // VIEW FUNCTIONS 
-// async function for viewing employee roster
+
+// async function for viewing entire employee roster
 async function viewEmployees() {
     const query = 'SELECT e.id, e.first_name AS First_Name, e.last_name AS Last_Name, title AS Title, salary AS Salary, name AS Department, CONCAT(m.first_name, " ", m.last_name) AS Manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id';
     await db.query(query, function (err, res) {
@@ -149,6 +154,8 @@ async function viewDepartments() {
     });
 }
 
+
+// CREATE FUNCTIONS
 
 // USER INPUT VALIDATION FUNCTION 
 // validation function to be called inside inquirer to check that user input isn't left blank
@@ -241,28 +248,23 @@ async function addRole() {
         });
 };
 
-// async function for removing employee
-async function delEmployee() {
-    let employees = await db.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee');
-    employees.push({ id: null, name: "Cancel" });
-
+// async function to add a department in the db
+async function addDepartment() {
     inquirer
         .prompt([
             {
-                name: "employeeName",
-                type: "list",
-                message: "Which employee would you like to remove?",
-                choices: employees.map(obj => obj.name)
+                name: "deptName",
+                type: "input",
+                message: "Please enter the new department name: ",
+                validate: confirmUserInput
             }
         ])
-        .then(response => {
-            if (response.employeeName != "Cancel") {
-                let removeEmployee = employees.find(obj => obj.name === response.employeeName);
-                db.query("DELETE FROM employee WHERE id = ?", removeEmployee.id);
-                console.log("\x1b[32m", `${response.employeeName} has been removed.`);
-            }
+        .then(answer => {
+            db.query("INSERT INTO department (name) VALUES (?)", [answer.deptName]);
+            console.log("\x1b32m", `${answer.deptName} was added to the list of departments.`);
             runCMS();
         });
+
 };
 
 
@@ -346,6 +348,33 @@ async function updateEmployeeRole() {
         });
 };
 
+
+// DELETE FUNCTIONS
+
+// async function for deleting an employee
+async function delEmployee() {
+    let employees = await db.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee');
+    employees.push({ id: null, name: "Cancel" });
+
+    inquirer
+        .prompt([
+            {
+                name: "employeeName",
+                type: "list",
+                message: "Which employee would you like to remove?",
+                choices: employees.map(obj => obj.name)
+            }
+        ])
+        .then(response => {
+            if (response.employeeName != "Cancel") {
+                let removeEmployee = employees.find(obj => obj.name === response.employeeName);
+                db.query("DELETE FROM employee WHERE id = ?", removeEmployee.id);
+                console.log("\x1b[32m", `${response.employeeName} has been removed.`);
+            }
+            runCMS();
+        });
+};
+
 // async function to delete a role in the db
 async function delRole() {
     let roles = await db.query("SELECT id, title FROM role");
@@ -393,23 +422,3 @@ async function delDepartment() {
             runCMS();
         });
 };
-
-// async function to add a department in the db
-async function addDepartment() {
-    inquirer
-        .prompt([
-            {
-                name: "deptName",
-                type: "input",
-                message: "Please enter the new department name: ",
-                validate: confirmUserInput
-            }
-        ])
-        .then(answer => {
-            db.query("INSERT INTO department (name) VALUES (?)", [answer.deptName]);
-            console.log("\x1b32m", `${answer.deptName} was added to the list of departments.`);
-            runCMS();
-        });
-
-};
-
