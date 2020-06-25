@@ -2,34 +2,51 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 
-// establishing connection template
-const connection = mysql.createConnection({
-    host: "localhost",
+// establishing connection template and utilizing Promises for async await methods in the program
+class Database {
+    constructor(config) {
+        this.connection = mysql.createConnection(config);
+    }
 
+    query(sql, args) {
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, args, (err, rows) => {
+                if (err)
+                    return reject(err);
+                resolve(rows);
+            });
+        });
+    }
+
+    close() {
+        return new Promise((resolve, reject) => {
+            this.connection.end(err => {
+                if (err)
+                    return reject(err);
+                resolve();
+            });
+        });
+    }
+}
+
+// including credentials to log-in to db
+const db = new Database({
+    host: "localhost",
     // port to reach MySQL Workbench
     port: 3306,
-
     // username
     user: "root",
-
     // password and database to access
     password: "p@ssw0rd1",
     database: "company_db"
 });
-
-// establishing connection to MySQL Workbench when starting program and prompts user what action to take
-connection.connect(function (err) {
-    if (err) throw err;
-    runCMS();
-});
-
 
 // main menu of options for the user to select to do with the Company Content Management System (CMS)
 function runCMS() {
     inquirer
         .prompt({
             name: "action",
-            type: "rawlist",
+            type: "list",
             message: "What would you like to do?",
             choices: [
                 "View All Employees",
@@ -90,38 +107,96 @@ function runCMS() {
                     viewDeptBudget();
                     break;
                 case "EXIT":
-                    connection.end();
+                    db.close();
                     break;
             }
         });
 };
 
-// function for viewing employee roster
-function viewEmployees() {
-    const query = "SELECT * FROM employee";
-    connection.query(query, function(err, res) {
-        if(err) throw err;
-            console.table(res);
+// insert welcome message/ascii art to start the app off
+
+// then initiate the program
+runCMS();
+
+
+// async function for viewing employee roster
+async function viewEmployees() {
+    const query = 'SELECT e.id, e.first_name AS First_Name, e.last_name AS Last_Name, title AS Title, salary AS Salary, name AS Department, CONCAT(m.first_name, " ", m.last_name) AS Manager FROM employee e LEFT JOIN employee m ON e.manager_id = m.id INNER JOIN role r ON e.role_id = r.id INNER JOIN department d ON r.department_id = d.id';
+    await db.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
         runCMS();
     });
 }
 
-// function for viewing all roles available
-function viewRoles() {
-    const query = "SELECT * FROM role";
-    connection.query(query, function(err, res) {
-        if(err) throw err;
-            console.table(res);
+// async function for viewing all roles available
+async function viewRoles() {
+    const query = "SELECT r.id, title, salary, name AS department FROM role r LEFT JOIN department d ON department_id = d.id";
+    await db.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
         runCMS();
     });
 }
 
-// function for viewing all departments available
-function viewDepartments() {
-    const query = "SELECT * FROM department";
-    connection.query(query, function(err, res) {
-        if(err) throw err;
-            console.table(res);
+// async function for viewing all departments available
+async function viewDepartments() {
+    const query = "SELECT id, name AS department FROM department";
+    await db.query(query, function (err, res) {
+        if (err) throw err;
+        console.table(res);
         runCMS();
     });
 }
+
+// validation function to be called inside inquirer to check that user input isn't left blank
+async function confirmUserInput(input) {
+    if (input.trim() != "") {
+        return true;
+    }
+    return "Invalid input. Entries must not be left blank."
+}
+
+// async function for adding an employee to employee roster
+async function addEmployee() {
+    // query the company database for all managers available to provide option to select and assign manager to an employee
+    let positions = await db.query("SELECT id, title FROM role");
+    let managers = await db.query('SELECT id, CONCAT(first_name, " ", last_name) AS Manager FROM employee');
+    managers.unshift({ id: null, Manager: "None" });
+
+    // once managers have been selected, prompt user for all information to add new employee 
+    inquirer
+        .prompt([
+            {
+                name: "empFirstname",
+                type: "input",
+                message: "What is the employee's first name?",
+                validate: confirmUserInput
+            },
+            {
+                name: "empLastname",
+                type: "input",
+                message: "What is the employee's last name?",
+                validate: confirmUserInput
+            },
+            {
+                name: "empRole",
+                type: "list",
+                message: "What is the employee's role?",
+                choices: positions.map(obj => obj.title)
+            },
+            {
+                name: "empManager",
+                type: "list",
+                message: "Who is the employee's manager?",
+                choices: managers.map(obj => obj.Manager)
+            }
+        ])
+        .then(answers => {
+            let positionDetails = positions.find(obj => obj.title === answers.empRole);
+            let manager = managers.find(obj => obj.Manager === answers.empManager);
+            db.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?)", [[answers.empFirstname.trim(), answers.empLastname.trim(), positionDetails.id, manager.id]]);
+            console.log("\x1b[32m", `${answers.empFirstname} was added to the employee CMS!`);
+            runCMS();
+        });
+};
