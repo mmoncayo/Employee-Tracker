@@ -200,3 +200,28 @@ async function addEmployee() {
             runCMS();
         });
 };
+
+// async function for removing employee
+async function delEmployee() {
+    let employees = await db.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee');
+    employees.push({ id: null, name: "Cancel"});
+
+    inquirer
+    .prompt([
+        {
+            name: "employeeName",
+            type: "list",
+            message: "Which employee would you like to remove?",
+            choices: employees.map(obj => obj.name)
+        }
+    ])
+    .then(response => {
+        if(response.employeeName != "Cancel") {
+            let removeEmployee= employees.find(obj => obj.name === response.employeeName);
+            db.query("DELETE FROM employee WHERE id = ?", removeEmployee.id);
+            console.log("\x1b[32m", `${response.employeeName} has been removed.`);
+        }
+        runCMS();
+    });
+};
+
