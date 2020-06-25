@@ -271,4 +271,34 @@ async function updateEmployeeManager() {
     });
 };
 
+// async function that updates a selected employee's role
+async function updateEmployeeRole() {
+    let employees = await db.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee');
+    employees.push({ id: null, name: "Cancel" });
+    let roles = await db.query("SELECT id, title FROM role");
 
+    inquirer
+    .prompt([
+        {
+            name: "employeeName",
+            type: "list",
+            message: "For which employee would you like to update their role?",
+            choices: roles.map(obj => obj.title)
+        },
+        {
+            name: "updatedRole",
+            type: "list",
+            message: "What role should the employee be updated to?",
+            choices: roles.map(obj => obj.title) 
+        }
+    ])
+    .then(answers => {
+        if(answers.employeeName != "Cancel") {
+            let employeeID = employees.find(obj => obj.name === answers.employeeName).id;
+            let roleID= roles.find(obj => obj.title === answers.updatedRole).id;
+            db.query("UPDATE employee SET role_id = ? WHERE id = ?", [roleID, employeeID]);
+            console.log("\x1b[32m", `${answers.employeeName}'s new role is ${answers.updatedRole}.`);
+        }
+        runCMS();
+    })
+}
