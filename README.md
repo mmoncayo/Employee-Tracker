@@ -25,7 +25,7 @@ This Node app serves as a Content Management System that is to be used to manage
 
 ## Demo
 
-![Employee Tracker Demo](./NoteTakerDemo.gif)
+![Employee Tracker Demo](./Employee-Tracker_Demo.gif)
 
 ## Prerequisites
 
