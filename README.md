@@ -1,5 +1,5 @@
 # Employee Tracker App
-![GitHub License](https://img.shields.io/github/license/mmoncayo/Employee-Tracker) ![GitHub License](https://img.shields.io/github/repo-size/mmoncayo/Employee-Tracker) ![GitHub License](https://img.shields.io/github/package-json/dependency-version/mmoncayo/Employee-Tracker/mysql) ![GitHub License](https://img.shields.io/github/package-json/dependency-version/mmoncayo/Employee-Tracker/console.table)![GitHub License](https://img.shields.io/github/package-json/dependency-version/mmoncayo/Employee-Tracker/inquirer) ![GitHub License](https://img.shields.io/github/followers/mmoncayo?style=social)
+![GitHub License](https://img.shields.io/github/license/mmoncayo/Employee-Tracker) ![GitHub License](https://img.shields.io/github/repo-size/mmoncayo/Employee-Tracker) ![GitHub License](https://img.shields.io/github/package-json/dependency-version/mmoncayo/Employee-Tracker/mysql) ![GitHub License](https://img.shields.io/github/package-json/dependency-version/mmoncayo/Employee-Tracker/console.table) ![GitHub License](https://img.shields.io/github/package-json/dependency-version/mmoncayo/Employee-Tracker/inquirer) ![GitHub License](https://img.shields.io/github/followers/mmoncayo?style=social)
 
 ## Description
 ​
@@ -53,7 +53,12 @@ Once you have the GitHub repository locally stored, Node.js, MySQL, & MySQL Work
 1. In your "Employee-Tracker" directory there is a "db" directory. In that database directory there are two primary SQL files: schema.sql and seeds.sql. 
     * Open your MySQL Workbench and run schema.sql to create the database and tables.
     * Run the seeds.sql file to populate the database with some data.
-2. Now that your database is ready to be queried, open cms.js and replace the placeholder MySQL root password on line 40 with the your personal MySQL password.
+2. Now that your database is ready to be queried, open cms.js and replace the placeholder MySQL root password on line 40 with the your personal MySQL password, see for reference a code snippet below:
+```js
+    // password and database to access MySQL Workbench files schema.sql & seeds.sql
+    password: "p@ssw0rd1", // replace this password with your own 
+    database: "company_db"
+```
 
 ## Usage
 
