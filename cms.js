@@ -328,7 +328,7 @@ async function updateEmployeeRole() {
                 name: "employeeName",
                 type: "list",
                 message: "For which employee would you like to update their role?",
-                choices: roles.map(obj => obj.title)
+                choices: employees.map(obj => obj.name)
             },
             {
                 name: "updatedRole",
