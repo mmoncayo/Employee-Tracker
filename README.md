@@ -54,7 +54,7 @@ Once you have the GitHub repository locally stored, Node.js, MySQL, & MySQL Work
     * Open your MySQL Workbench and run schema.sql to create the database and tables.
     * Run the seeds.sql file to populate the database with some data.
 2. Now that your database is ready to be queried, open cms.js and replace the placeholder MySQL root password on line 40 with the your personal MySQL password, see for reference a code snippet below:
-```js
+```javascript
     // password and database to access MySQL Workbench files schema.sql & seeds.sql
     password: "p@ssw0rd1", // replace this password with your own 
     database: "company_db"
