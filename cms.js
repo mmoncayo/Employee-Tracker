@@ -243,7 +243,7 @@ async function addRole() {
         .then(answers => {
             let deptID = departments.find(obj => obj.name === answers.newRoleDept).id;
             db.query("INSERT INTO role (title, salary, department_id) VALUES (?)", [[answers.newRole, answers.newSalary, deptID]]);
-            console.log("\x1b32m", `${answers.newRole} was added and is assigned to the ${answers.newRoleDept} department.`);
+            console.log("\x1b[32m", `${answers.newRole} was added and is assigned to the ${answers.newRoleDept} department.`);
             runCMS();
         });
 };
@@ -261,7 +261,7 @@ async function addDepartment() {
         ])
         .then(answer => {
             db.query("INSERT INTO department (name) VALUES (?)", [answer.deptName]);
-            console.log("\x1b32m", `${answer.deptName} was added to the list of departments.`);
+            console.log("\x1b[32m", `${answer.deptName} was added to the list of departments.`);
             runCMS();
         });
 
@@ -393,7 +393,7 @@ async function delRole() {
             if (answer.roleName != "Cancel") {
                 let delRole = roles.find(obj => obj.title === answer.roleName);
                 db.query("DELETE FROM role WHERE id = ?", delRole.id);
-                console.log("\x1b32m", `${answer.roleName} was deleted.`);
+                console.log("\x1b[32m", `${answer.roleName} was deleted.`);
             }
             runCMS();
         });
@@ -417,7 +417,7 @@ async function delDepartment() {
             if (answer.deptName != "Cancel") {
                 let delDept = departments.find(obj => obj.name === answer.deptName);
                 db.query("DELETE FROM department WHERE id = ?", delDept.id);
-                console.log("\x1b32m", `The department of ${answer.deptName} was removed.`);
+                console.log("\x1b[32m", `The department of ${answer.deptName} was removed.`);
             }
             runCMS();
         });
