@@ -13,7 +13,7 @@ This Node app serves as a Content Management System that is to be used to manage
 
 * [Installation](#installation)
 
-* [Getting Started](#getting%20started)
+* [Getting Started](#getting-started)
 
 * [Usage](#usage)
 
